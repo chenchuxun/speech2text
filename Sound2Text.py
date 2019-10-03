@@ -47,13 +47,13 @@ class Speech2Text():
         self.outputFilePath = "./" + fileName[:fileName.index(".")] + "_reduceNoise" + fileName[fileName.index("."):]
         if os.path.exists(self.outputFilePath) == False:
             logmmse_from_file(self.inputFilePath,self.outputFilePath)
-
-gaCredentials = r"[GOOGLE_APPLICATION_CREDENTIALS]"  # Please set up  your own GOOGLE_APPLICATION_CREDENTIALS json file here
+ # Please set up  your own GOOGLE_APPLICATION_CREDENTIALS json file here, example ./my_google_credentials.json
+gaCredentials = r"../googleCredentials./My First Project-f0be9e86fbc7.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS']= gaCredentials
 
 
 s2t = Speech2Text()
-s2t.inputFilePath = "./wzw.wav"
+s2t.inputFilePath = "" # s2t.inputFilePath = "./wzw.wav"
 s2t.speech2Text(s2t.inputFilePath)
 s2t.noiseReduce()
 s2t.speech2Text(s2t.outputFilePath)
