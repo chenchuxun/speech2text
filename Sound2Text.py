@@ -6,12 +6,38 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 
+"""
+This application demonstrates a voice file 
+can be transformed to text in a better result after applying a noise reduction. 
+example:
+ 
+:param 1. inputFilePath: your own file path
+       2. languageCode: refer to https://cloud.google.com/speech-to-text/docs/languages
+       
+       
+# Please set up  your own GOOGLE_APPLICATION_CREDENTIALS json file, example ./my_google_credentials.json
+gaCredentials = r"*********.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']= gaCredentials
+s2t = Speech2Text()
+s2t.languageCode='yue-Hant-HK'
+s2t.inputFilePath = "your own file path" such as:  "./wzw.wav" (we provide two example files within the same directory)
+s2t.speech2Text(s2t.inputFilePath)
+s2t.noiseReduce() #the processed file will be saved in the currenty directory
+s2t.speech2Text(s2t.outputFilePath)
+ 
+console:
+Processing speech to Text, file name is :  ./zjc.wav
+Transcript: 我想知我咁快返嚟咁樣嘅一方吹唔係第一時間返屋企嗰條女囉點會上到樓你喺個門口等緊紅油呀我不及妻兒唔搞啲輕擎嘅開心返嚟囉佢飯都五十幾條啦喺呢度住宿嘅免費一個月就慳返成皮㗎喇有咩頭暈身㷫又唔使急症排隊排到仆街將我成日同人講假期買樓輪公屋冇㗎啦坐監係香港年輕人嘅出路
+Processing speech to Text, file name is :  ./zjc_reduceNoise.wav
+Transcript: 我想知我咁快返嚟咁樣嘅一方吹我唔係第一時間返屋企嗰條女囉點會上到樓你喺個門口等緊紅油呀我不及妻兒唔搞啲輕擎嘅開心返嚟囉做嚇就好咩條數咁計嘅喺出面做緊劏房租衫差一個月啦你繼水電煤喎所以餐廳腿飯都五十幾條啦喺呢度住宿嘅免費一個月即刻返上嚟㗎啦有咩頭暈身㷫又唔使急症排隊排到仆街我成日同人講假期買樓輪公屋冇㗎啦坐監係香港年輕人嘅出路 
+"""
 
 
 class Speech2Text():
 
     inputFilePath = ""
     outputFilePath = ""
+    languageCode = ""
 
     def speech2Text(self,audioFile):
         print("Processing speech to Text, file name is : ",audioFile)
@@ -34,7 +60,7 @@ class Speech2Text():
             encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
             sample_rate_hertz=44100,
             audio_channel_count=2,
-            language_code='yue-Hant-HK')#language_code='yue-Hant-HK'
+            language_code=self.languageCode) #language_code='yue-Hant-HK'
 
         # Detects speech in the audio file
         response = client.recognize(config, audio)
@@ -47,13 +73,7 @@ class Speech2Text():
         self.outputFilePath = "./" + fileName[:fileName.index(".")] + "_reduceNoise" + fileName[fileName.index("."):]
         if os.path.exists(self.outputFilePath) == False:
             logmmse_from_file(self.inputFilePath,self.outputFilePath)
- # Please set up  your own GOOGLE_APPLICATION_CREDENTIALS json file here, example ./my_google_credentials.json
-gaCredentials = r"../googleCredentials./My First Project-f0be9e86fbc7.json"
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']= gaCredentials
 
 
-s2t = Speech2Text()
-s2t.inputFilePath = "" # s2t.inputFilePath = "./wzw.wav"
-s2t.speech2Text(s2t.inputFilePath)
-s2t.noiseReduce()
-s2t.speech2Text(s2t.outputFilePath)
+
+
