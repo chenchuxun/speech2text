@@ -25,7 +25,15 @@ s2t.speech2Text(s2t.inputFilePath)
 s2t.noiseReduce() #the processed file will be saved in the currenty directory
 s2t.speech2Text(s2t.outputFilePath)
  
-console:
+ 
+ console1:
+ 
+Processing speech to Text, file name is :  wzw.wav
+Transcript: 一套成功嘅電影對一個社會嘅經濟同文化推動力係好大㗎所以我哋2003年嘅香港電影全力回歸社會反映社會影響社會大家要警惕禽流感我哋就拍咗金雞我哋拍賣香港係男女平等我嚟拍咗大隻佬唔係淨係女人除衫先有人睇㗎人除衫都好好睇㗎就喺上個禮拜警方喺旺角帶舉掃黃點解呀係邊個通風報信呀我哋部電影豪情
+Processing speech to Text, file name is :  ./wzw_reduceNoise.wav
+Transcript: 一套成功嘅電影對一個社會嘅經濟同文化推動力係好大㗎所以我哋2003年嘅香港電影全力回歸社會反映社會影響社會立提醒大家要警惕禽流感我哋就拍咗金雞我哋拍賣飛鷹提醒大家香港係男女平等嘅我哋拍咗大隻佬唔係淨係女人除衫先有人睇㗎除衫都好好睇㗎就喺上個禮拜警方喺旺角帶舉掃黃點解呀係邊個通風報信呀我哋部電影豪情
+
+console2:
 Processing speech to Text, file name is :  ./zjc.wav
 Transcript: 我想知我咁快返嚟咁樣嘅一方吹唔係第一時間返屋企嗰條女囉點會上到樓你喺個門口等緊紅油呀我不及妻兒唔搞啲輕擎嘅開心返嚟囉佢飯都五十幾條啦喺呢度住宿嘅免費一個月就慳返成皮㗎喇有咩頭暈身㷫又唔使急症排隊排到仆街將我成日同人講假期買樓輪公屋冇㗎啦坐監係香港年輕人嘅出路
 Processing speech to Text, file name is :  ./zjc_reduceNoise.wav
