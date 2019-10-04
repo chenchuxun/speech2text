@@ -1,0 +1,204 @@
+# TODO(developer): Uncomment and set the following variables
+import os
+from datetime import datetime
+from google.cloud import automl_v1beta1 as automl
+from google.cloud.automl_v1beta1 import enums
+
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']=r""
+
+
+
+class TextClassATML():
+    client = automl.AutoMlClient()
+    filter_ = 'text_classification_model_metadata:*'
+    project_id = ''
+    compute_region = ''
+    model_name = ''
+    dataset_id = ''
+    model_id = ""
+    dataset_name = ''
+    def createDataSet(self):
+        # TODO(developer): Uncomment and set the following variables
+        # project_id = '[PROJECT_ID]'
+        # compute_region = '[COMPUTE_REGION]'
+        # dataset_name = '[DATASET_NAME]'
+
+
+        # A resource that represents Google Cloud Platform location.
+        project_location = self.client.location_path(self.project_id, self.compute_region)
+
+        # Set dataset name and metadata.
+        my_dataset = {
+            "display_name": self.dataset_name,
+            "text_classification_dataset_metadata": {}
+        }
+
+        # Create a dataset with the dataset metadata in the region.
+        dataset = self.client.create_dataset(project_location, my_dataset)
+
+        # Display the dataset information.
+        print("Dataset name: {}".format(dataset.name))
+        print("Dataset id: {}".format(dataset.name.split("/")[-1]))
+        print("Dataset display name: {}".format(dataset.display_name))
+        print("Dataset example count: {}".format(dataset.example_count))
+        print("Dataset create time: {}".format(datetime.fromtimestamp(dataset.create_time.seconds).strftime("%Y-%m-%dT%H:%M:%SZ")))
+
+
+    def dataSetList(self):
+
+
+        # A resource that represents Google Cloud Platform location.
+        project_location = self.client.location_path(self.project_id, self.compute_region)
+
+        # List all the datasets available in the region by applying filter.
+        response = self.client.list_datasets(project_location,self.filter_)
+
+        print("List of datasets:")
+        for dataset in response:
+            # Display the dataset information.
+            print("Dataset name: {}".format(dataset.name))
+            print("Dataset id: {}".format(dataset.name.split("/")[-1]))
+            print("Dataset display name: {}".format(dataset.display_name))
+            print("Dataset example count: {}".format(dataset.example_count))
+            print("Dataset create time: {}".format(
+                datetime.fromtimestamp(dataset.create_time.seconds).strftime("%Y-%m-%dT%H:%M:%SZ")))
+
+
+    def importDataSet(self):
+        # TODO(developer): Uncomment and set the following variables
+        # project_id = '[PROJECT_ID]'
+        # compute_region = '[COMPUTE_REGION]'
+        # dataset_id = '[DATASET_ID]'
+        path = 'gs://cloud-ml-data/NL-entity/dataset.csv'
+
+        # Get the full path of the dataset.
+        dataset_full_id = self.client.dataset_path(
+            self.project_id, self.compute_region, self.dataset_id
+        )
+
+        # Get the multiple Google Cloud Storage URIs.
+        input_uris = path.split(",")
+        input_config = {"gcs_source": {"input_uris": input_uris}}
+
+        # Import the dataset from the input URI.
+        response = self.client.import_data(dataset_full_id, input_config)
+
+        print("Processing import...")
+        # synchronous check of operation status.
+        print("Data imported. {}".format(response.result()))
+
+
+    def trainingModel(self):
+        # TODO(developer): Uncomment and set the following variables
+        # project_id = '[PROJECT_ID]'
+        # compute_region = '[COMPUTE_REGION]'
+
+        # A resource that represents Google Cloud Platform location.
+
+        # A resource that represents Google Cloud Platform location.
+        project_location = self.client.location_path(self.project_id, self.compute_region)
+
+        # Set model name and model metadata for the dataset.
+        my_model = {
+            "display_name": self.model_name,
+            "dataset_id": self.dataset_id,
+            "text_classification_model_metadata": {},
+        }
+
+        # Create a model with the model metadata in the region.
+        response = self.client.create_model(project_location, my_model)
+        print("Training operation name: {}".format(response.operation.name))
+        print("Training started...")
+
+
+    def getModelInfo(self):
+        # Get the full path of the model.
+        model_full_id = self.client.model_path(self.project_id, self.compute_region, self.model_id)
+
+        # Get complete detail of the model.
+        model = self.client.get_model(model_full_id)
+
+        # Retrieve deployment state.
+        deployment_state = ""
+        if model.deployment_state == enums.Model.DeploymentState.DEPLOYED:
+            deployment_state = "deployed"
+        else:
+            deployment_state = "undeployed"
+
+        # Display the model information.
+        print("Model name: {}".format(model.name))
+        print("Model id: {}".format(model.name.split("/")[-1]))
+        print("Model display name: {}".format(model.display_name))
+        print("Model create time:")
+        print("\tseconds: {}".format(model.create_time.seconds))
+        print("\tnanos: {}".format(model.create_time.nanos))
+        print("Model deployment state: {}".format(deployment_state))
+
+    def getAvailableModelList(self):
+        # A resource that represents Google Cloud Platform location.
+        project_location = self.client.location_path(self.project_id, self.compute_region)
+
+        # List all the models available in the region by applying filter.
+        response = self.client.list_models(project_location)
+        # I delete the filter_ attribute here
+        print("List of models:")
+        for model in response:
+            # Retrieve deployment state.
+            deployment_state = ""
+            if model.deployment_state == enums.Model.DeploymentState.DEPLOYED:
+                deployment_state = "deployed"
+            else:
+                deployment_state = "undeployed"
+
+            # Display the model information.
+            print("Model name: {}".format(model.name))
+            print("Model id: {}".format(model.name.split("/")[-1]))
+            print("Model display name: {}".format(model.display_name))
+            print("Model create time:")
+            print("\tseconds: {}".format(model.create_time.seconds))
+            print("\tnanos: {}".format(model.create_time.nanos))
+            print("Model deployment state: {}".format(deployment_state))
+
+
+    def evaludateModel(self):
+        # Get the full path of the model.
+        model_full_id = self.client.model_path(self.project_id, self.compute_region, self.model_id)
+
+        # List all the model evaluations in the model by applying filter.
+        response = self.client.list_model_evaluations(model_full_id)
+        # response = client.list_model_evaluations(model_full_id, filter_)
+        print("List of model evaluations:")
+        for element in response:
+            print(element)
+
+
+    def deployModel(self):
+        name = self.client.model_path(self.project_id,self.compute_region,self.model_id)
+        response = self.client.deploy_model(name)
+
+    def classifyContent(self,filePath):
+        prediction_client = automl.PredictionServiceClient()
+
+        # Get the full path of the model.
+        model_full_id = self.client.model_path(
+            self.project_id, self.compute_region, self.model_id
+        )
+
+        # Read the file content for prediction.
+        with open(filePath, "rb") as content_file:
+            snippet = content_file.read()
+
+        # Set the payload by giving the content and type of the file.
+        payload = {"text_snippet": {"content": snippet, "mime_type": "text/plain"}}
+
+        # params is additional domain-specific parameters.
+        # currently there is no additional parameters supported.
+        params = {}
+        response = prediction_client.predict(model_full_id, payload, params)
+        print("Prediction results:")
+        for result in response.payload:
+            print("Predicted class name: {}".format(result.display_name))
+            print("Predicted class score: {}".format(result.classification.score))
+
+
